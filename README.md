@@ -24,8 +24,8 @@ If you want to compile MailToDisk by yourself you need Python 3.4 and pywin32 - 
 
 Credits
 -----
-CybeSystems.com (https://github.com/GathSystems/MailToDisk)
-Kay Vogelgesang, XAMPP - apachefriends.org (original script)
+ - CybeSystems.com (https://github.com/GathSystems/MailToDisk)
+ - Kay Vogelgesang, XAMPP - apachefriends.org (original script)
 
 Feedback
 -----
