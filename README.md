@@ -4,8 +4,6 @@ MailToDisk
 Replacement for mailtodisk.exe from XAMPP and other web development environments.
 
 Download ready to use files
------
-You can download prebuild version on http://www.cybesystems.com/index.php/downloads.
 
 Replace
 -----
@@ -26,6 +24,7 @@ If you want to compile MailToDisk by yourself you need Python 3.4 and pywin32 - 
 
 Credits
 -----
+CybeSystems.com (https://github.com/GathSystems/MailToDisk)
 Kay Vogelgesang, XAMPP - apachefriends.org (original script)
 
 Feedback

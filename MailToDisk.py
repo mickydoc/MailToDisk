@@ -43,8 +43,9 @@ import dict4ini
 
 cybeSystemsMainSettings = {}
 iniMainSettings = None
+allowed_file_extensions = ['htm', 'html', 'txt', 'eml']
 
-mainConfigFile = 'config.ini'
+mainConfigFile = scriptpath + '/config.ini'
 
 cybeSystemsMainSettings = dict4ini.DictIni(mainConfigFile)
 iniMainSettings = dict4ini.DictIni(mainConfigFile)
@@ -55,12 +56,12 @@ def defaultMainSettingsIni():
     cybeSystemsMainSettings['Main']['OpenGeneratedEmail'] = True
     cybeSystemsMainSettings['Main']['300MBFolderLimit'] = True
     cybeSystemsMainSettings['Main']['OutputFolder'] = "mailoutput"
+    cybeSystemsMainSettings['Main']['OutputFileExtension'] = "eml" # Can be "htm", "html", "txt, "eml". See "allowed_file_extensions"
+    cybeSystemsMainSettings['Main']['UseConservativeFileNaming'] = False
+
+defaultMainSettingsIni()
 
 def replaceSetting():
-    defaultMainSettingsIni()
-    mainConfigFile = 'config.ini'
-    iniMainSettings = dict4ini.DictIni(mainConfigFile)
-
     for section in list(iniMainSettings.keys()):
         for opt in list(iniMainSettings[section].keys()):
             value = iniMainSettings[section][opt]
@@ -94,17 +95,28 @@ def getFolderSize(folder):
 
 class MailToDisk():
 
-    mailOutputFolder = os.path.join(os.getcwd(), cybeSystemsMainSettings['Main']['OutputFolder'])
-    filename = mailOutputFolder + "\\mail_" + datetime.now().strftime("%Y%m%d_%H%M%S_%f") + ".eml"
+    mailOutputFolder = os.path.join(os.path.dirname(scriptpath), cybeSystemsMainSettings['Main']['OutputFolder'])
+    
+    chosen_file_extension = str(cybeSystemsMainSettings['Main']['OutputFileExtension'])
+    
+    if cybeSystemsMainSettings['Main']['UseConservativeFileNaming'] == False:
+        filename = mailOutputFolder + "\\mail_" + datetime.now().strftime("%Y%m%d_%H%M%S_%f")
+    else:
+        filename = mailOutputFolder + "\\mail-" + datetime.now().strftime("%Y%m%d-%H%M%S-%f")
+    
+    if chosen_file_extension in allowed_file_extensions:
+        filename = filename + "." + chosen_file_extension
+    else:
+        filename = filename + ".txt"
+    
 
     # Security restriction: mailoutput folder may not have more then 300 MB overall size for write in
     if cybeSystemsMainSettings['Main']['300MBFolderLimit'] == True:
         if os.path.exists(mailOutputFolder):
             mailOutputFolderSize = getFolderSize(mailOutputFolder)
             if mailOutputFolderSize > 314572800: # 300 MB
-                #warnfile =  "%s\%s" % (mailOutputFolder,"MAILTODISK_WRITE_RESTRICTION_FOLDER_MORE_THEN_300_MB.txt")
                 f = open(mailOutputFolder + "\\MAILTODISK_WRITE_RESTRICTION_FOLDER_MORE_THEN_300_MB.txt", 'w')
-                f.write("MailtoDisk will NOT write in folder with a overall size of 300 MB (security limit). Please clean up this folder.")
+                f.write("MailToDisk will NOT write in a folder with a overall size of 300 MB (security limit)! Please clean up this folder!!!")
                 f.close()
                 sys.exit(1)
 
